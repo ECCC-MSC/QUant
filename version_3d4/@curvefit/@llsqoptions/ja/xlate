@@ -1,0 +1,5 @@
+% Copyright 2001-2005 The MathWorks, Inc.
+% $Revision: 1.2.2.3 $
+%toolbox/curvefit/curvefit/@curvefit/@llsqoptions
+<(addlisteners)%s field must have numeric values; resetting to previous value.
+>(addlisteners)フィールド %s は、数値です。前の値にリセットします。

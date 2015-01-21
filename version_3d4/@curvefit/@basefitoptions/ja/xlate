@@ -1,0 +1,5 @@
+% Copyright 2001-2005 The MathWorks, Inc.
+% $Revision: 1.3.2.3 $
+%/sandbox/rhu/R12/toolbox/curvefit/curvefit/@curvefit/@basefitoptions
+<(addlisteners)%s field must have numeric values; resetting to previous value.
+>(addlisteners)フィールド %s は、数値です。：前の値にリセットしてください。

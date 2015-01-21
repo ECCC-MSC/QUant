@@ -1,0 +1,33 @@
+% Copyright 2001-2005 The MathWorks, Inc.
+% $Revision: 1.2.2.3 $
+%/toolbox/curvefit/curvefit/@fittype/private
+<(liblookup)Library name %s not found.
+>(liblookup)ライブラリ名 %s が、見つかりません。
+<(makedisplay)Linear model:\n          
+>(makedisplay)線形モデル:\n     
+<(makedisplay)General model:\n          
+>(makedisplay)一般モデル:\n     
+<(makedisplay)%s computed from %s
+>(makedisplay)%s は、%s から計算されます。
+<(makedisplay)Unknown FITTYPE type.
+>(makedisplay)未知の FITTYPE タイプ
+<(cfsymvar)Quotes in S are not in pairs.
+>(cfsymvar)S の中の引用符が組になっていません。
+<(sethandles)Last input x must be a column vector.
+>(sethandles)最後の入力 x は、列ベクトルです。
+<(sethandles)EXP1 requires at least two data points.
+>(sethandles)EXP1 は、少なくとも2つのデータ点を必要とします。
+<(sethandles)EXP2 requires at least four data points.
+>(sethandles)EXP2 は、少なくとも4つのデータ点を必要とします。
+<(sethandles)Power functions require x to be positive. Non-positive data are treated as NaN.
+>(sethandles)パワー関数は、x が正であることを条件としています。正でないデータは、NaN として扱います。
+<(sethandles)Too few inputs.
+>(sethandles)入力が少なすぎます。
+<(sethandles)Input x must be a column vector.
+>(sethandles)入力 x は、列ベクトルです。
+<(sethandles)Library function not found.
+>(sethandles)ライブラリ関数が、見つかりません。
+<(sethandles)Wrong number of arguments.
+>(sethandles)引数の数が間違っています。
+<(sethandles)No closed form integral.
+>(sethandles)閉じた型の積分ではありません。
