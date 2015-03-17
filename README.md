@@ -4,9 +4,7 @@ This README briefly describes the workflow for the QUant code review
 
 ### What is this repository for? ###
 
-* QUant is some matlab
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+This repo is to enable collaboration on code review and optimization of the QUant package.
 
 ### How do I get set up? ###
 
