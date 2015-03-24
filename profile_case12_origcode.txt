@@ -1,0 +1,70 @@
+
+filename =
+
+05AE026_20100719_000.PD0
+
+
+info = 
+
+       name: '05AE026_20100719_000.PD0'
+       date: '21-Jan-2015 16:19:07'
+      bytes: 97020
+      isdir: 0
+    datenum: 7.3599e+05
+
+Reading file
+File complete
+The single ping velocity uncertainty from table 5 of the Winriver II user guide (Feb 2007) is used
+number or Monte Carlo realizations = 1000
+the uncertainty when all is varied (in %) = 5.06
+number or Monte Carlo realizations = 1000
+the uncertainty when bottom depth is varied (in %) = 0.198
+number or Monte Carlo realizations = 1000
+the uncertainty when water velocity is varied (in %) = 0.902
+number or Monte Carlo realizations = 1000
+the uncertainty when bottom velocity is varied (in %) = 1.69
+number or Monte Carlo realizations = 1000
+the uncertainty when temperature is varied (in %) = 0.143
+number or Monte Carlo realizations = 1000
+the uncertainty when salinity is varied (in %) = 0.0473
+number or Monte Carlo realizations = 1000
+the uncertainty when draft is varied (in %) = 0.381
+number or Monte Carlo realizations = 1000
+the uncertainty when heading is varied (in %) = 0.0134
+number or Monte Carlo realizations = 1000
+the uncertainty when magnetic declination is varied (in %) = 0.0131
+number or Monte Carlo realizations = 1000
+the uncertainty when left distance is varied (in %) = 0.787
+number or Monte Carlo realizations = 1000
+the uncertainty when right distance is varied (in %) = 0.74
+number or Monte Carlo realizations = 1000
+the uncertainty when left edge vel is varied (in %) = 1.83
+number or Monte Carlo realizations = 1000
+the uncertainty when right edge vel is varied (in %) = 1.67
+number or Monte Carlo realizations = 1000
+the uncertainty when extrap method top and bot is varied (in %) = 0.232
+number or Monte Carlo realizations = 1000
+the uncertainty when left coef is varied (in %) = 0.227
+number or Monte Carlo realizations = 1000
+the uncertainty when right coef is varied (in %) = 0.229
+number or Monte Carlo realizations = 1000
+the uncertainty when missing ensembles is varied (in %) = 2.35
+
+p = 
+
+      FunctionTable: [314x1 struct]
+    FunctionHistory: [2x0 double]
+     ClockPrecision: 1.0000e-03
+         ClockSpeed: 2.9000e+09
+               Name: 'MATLAB'
+           Overhead: 0
+
+{Undefined function or variable 'profilename'.
+
+Error in <a href="matlab:helpUtils.errorDocCallback('profile_code', 'D:\REPOS\QUant\profile_code.m', 10)" style="font-weight:bold">profile_code</a> (<a href="matlab: opentoline('D:\REPOS\QUant\profile_code.m',10,0)">line 10</a>)
+mkdir(profilename)
+} 
+profilename = 'profile_case12_origcode';
+mkdir(profilename)
+profsave(p,profilename)
+diary off

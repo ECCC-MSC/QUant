@@ -1,0 +1,61 @@
+Meeting to discussion review of Quant code.  Meeting attended by Frank Engel, Ryan Jackson, Elizabeth Jamieson, David Mueller, Kevin Oberg, Tom Over, and Mike Rehmel.
+
+Ryan and Frank went over their notes on the review they did of the Quant MatLab code.  
+
+Discussion of mean error and stdev:
+
+	* Spent some time discussing how to account for uncertainty in the edge distances.  DSM suggests that perhaps error for edge distance should be variable with a fixed ceiling.
+	* Liz said that user can input their own assessment of edge distance in the program
+	* We should consider some variations on the size of the error when we run Quant in batch mode to see how much it matters what the errors are in edge.
+	* Tom asked whether there are any non-Gaussian errors? So far, PRJ says it's Gaussian so far.
+	* Discussed use of extrap output to get extrapolation errors.  Perhaps an area for improvement as we do testing.  Paper stated that this error might be underestimated.
+	* Tom asked what happens if salinity error is zero how does code handle +/- 2 ppt (minus 2 ppt for example).  Need to follow up on this.
+	* QRev corrects for speed of sound adjustments (made in software) - not sure what Quant
+	* Discussed estimates of error in velocity measurement.  Quant uses error velocity and ( SD of Ve/Vw)^2 + (Single-ping/Vw)^2.  Error velocity by TRDI is scaled by the standard deviation of the water velocity.  DSM isn't so sure that it is correct to include the error velocity AND the single ping standard deviation.  Paper says that only error velocity for each bin is being used; ie. code and paper don't agree.  Need to follow up on this.
+	* StreamPro seems to be treated differently regarding error in velocity measurement.  Mike sent some info he had on this from TRDI (see below)
+	* Error velocity should be greater than the theoretical velocity standardization
+	* Consider ways to make a "deployment file" that informs various uncertainty constraints as is appropriate for various methods (e.g., salinity in freshwater would need a tighter constraint on uncertainty that for a tidal site)
+	* What is the appropriate way to handle the depth error computations?
+	* Discussed use of BT error velocity as estimate of error in boat velocity measurement.  This does not apply to use of GPS.
+	* Error in depth measurement - seems that error used is larger than it should be; on the other hand, based on what we now know about the errors with a sloping (or rough) bed, this might be reasonable or even low.
+	* Liz commented that perhaps we should look at the sensitivity of these parameters and only investigate how to compute error more correctly if it really matters at all.  We agreed that this is a good approach.  So we should run the code for a number of data sets.
+	* Dave said that we can check the error computations by seeing how well it's results compare to data set where we measured steady flow and have many transects.
+	* Liz asked about the status of identifying sets of data to run through Quant.  Kevin has asked Justin to start on this. He wants Justin to create a document that would start to flesh out the kinds of datasets that we want to run through.  Probably not started on this as yet - but believe that he will soon.
+	* When do address different instrument types?  Long term goal is to do that.  Need to implement some of the changes we have in mind first.  Dave says that using more recent QRev discharge computation code supports RiverRay and M9/S5s and this will help a lot.
+	* Intellectual Property lies with EC, collaboration with USGS
+	* Tom commented that not accounting for cross-correlation among error velocities could lead to under-estimation of measured area uncertainty (it is unknown to us right now what assumption on such correlations is being made in QUant).
+	* Liz pointed out we need to decide eventually what are we trying to compute the uncertainty of, transects or measurements, and suggested that uncertainty of measurements is the more important. Tom added that it is important to understand how QUant combines uncertainties of transects to compute uncertainties of measurements.
+
+Actions:
+
+	* Frank and Ryan will focus on removing the loops and other improvements.  
+	* Need to arrive at a standard agreed-upon way of estimating error in velocity measurements; do we use error velocity, velocity standard deviation?  
+	* How do we handle boat speed error for GPS reference?  Probably ought not to use BT error velocity. 
+	* Decide on error in depth measurement.  Probably more dependent on the bed roughness and pitch and roll than the instrument error.
+	* We should see if we can quickly incorporate latest Q computation code - if it isn't too difficult
+	* We should see what kind of speed improvements we can make before we try to implement Tim Cohn's "shortcut" - which assumes Gaussian distribution of errors.
+	* Liz will contact Stephanie to see to what extent she wants to continue to be involved and check on status of paper
+	* Liz  can help to identify data sets, or at least make a suggestion for how data sets could be categorized or grouped for batch assessments if we are to assess whether certain site specific conditions have an impact on the sensitivity of any particular parameter (or not).
+	
+STREAMPRO WM12 horizontal velocity std deviation with cell size:
+  Cell size [cm]   Original model   R. Marsden Updated      Cell size [cm]   Original model   R. Marsden Updated  
+ ---------------- ---------------- -------------------- -- ---------------- ---------------- -------------------- 
+               2              200                  200                   2   2.00             2.00                
+               3              164                  164                   3   1.64             1.64                
+               4              142                  142                   4   1.42             1.42                
+               5              126                  126                   5   1.26             1.26                
+               6              115                  115                   6   1.15             1.15                
+               7              106                  106                   7   1.06             1.06                
+               8               99                   99                   8   0.99             0.99                
+               9               61                   61                   9   0.61             0.61                
+              10               58                   58                  10   0.58             0.58                
+              11               55                   59                  11   0.55             0.59                
+              12               53                   61                  12   0.53             0.61                
+              13               40                   47                  13   0.40             0.47                
+              14               39                   49                  14   0.39             0.49                
+              15               37                   49                  15   0.37             0.49                
+              16               36                   43                  16   0.36             0.43                
+              17               30                   41                  17   0.30             0.41                
+              18               29                   40                  18   0.29             0.40                
+              19               28                   39                  19   0.28             0.39                
+              20               28                   39                  20   0.28             0.39                
