@@ -1,4 +1,4 @@
-clear all, close all
+
 
 % Last modified 2014/09/17 by SAM changed transData(mm).velSysErrPct = 1.1
 % percent  to  [nrows,ncols]  = size(transData(mm).wVelerr);
@@ -20,14 +20,17 @@ addpath 'tools/'
 addpath 'version_3d4/'
 
 % specify the file you want to process
-file = 11;
+file = 12;
+% file = 'fle';
 % If you don't want to process all the transects that were checked in the
 % measurement file, then alter the for loop on line 447
 
 % If you want to alter the number of runs, alter line 1088
 % START OF SWITCH LOOP WHERE NAMES OF FILES MUST BE ENTERED
 switch file
-    
+    case 'fle'
+        pathname = 'D:\REPOS\QUant\data_in\05MJ001_20080604\Angus_Colin\';
+        filename = '05MJ001_20080604.mmt';
     case 1 % Assiniboine Stn 05MH005 date 20110517 high flow % good, done July 8 2014
         % used in EC report
         pathname = 'G:\environment canada\data\ADCP measurements for Analysis\05MH005_20110517_aq1\';
@@ -72,7 +75,7 @@ switch file
         pathname = 'M:\My Network Documents\MATLAB\ADCP Uncertainty Analysis\QUant Matlab Code\code\data_in\MacKay_River_005_20140925_0\';
         filename = 'MacKay River 005_20140925_0.mmt';
     case 12 % used in paper submitted to JHE
-        pathname = 'M:\My Network Documents\MATLAB\ADCP Uncertainty Analysis\QUant Matlab Code\code\data_in\05AE026_20100719_O_Connor_AQ1\';
+        pathname = 'D:\REPOS\QUant\data_in\05AE026_20100719_O_Connor_AQ1\';
         filename = '05ae026_20100719.mmt';
     case 13 % DIDN'T work I get the following error: : An invalid XML character (Unicode: 0x8) was found in the element content of the document.
         pathname = 'G:\environment canada\data\ADCP measurements for Analysis\accreditation\05BM002_20090818_O_Connor_AQ1\';
