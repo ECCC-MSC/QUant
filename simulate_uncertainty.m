@@ -19,8 +19,48 @@ addpath 'general/'
 addpath 'tools/'
 addpath 'version_3d4/'
 
+% Ask the user to select files:
+% -----------------------------
+% Hardcode default for now; can still select any other file
+default_path = pwd;
+default_file = '';
+current_file = fullfile(default_path,default_file);
+[filename,pathname] = uigetfile({'*.mmt','WRII MMT-file'}, ...
+    'Select the WRII MMT file to analyze', ...
+    current_file, ...
+    'MultiSelect','off');
+
+if ischar(pathname) % The user did not hit "Cancel"
+    % Example snippet for adding persistent prefs if desired for a future
+    % GUI implementation:
+    %
+    % Update the preferences:
+    % -----------------------
+    %guiprefs = getappdata(handles.figure1,'guiprefs');
+    %guiprefs.ascii_path = pathname;
+    %guiprefs.ascii_file = filename;
+    %setappdata(handles.figure1,'guiprefs',guiprefs)
+    %store_prefs(handles.figure1,'pref_group_name')
+    
+    % Push messages to Log Window:
+    % ----------------------------
+    log_text = {...
+        '';...
+        ['%--- ' datestr(now) ' ---%'];...
+        'Current Project Directory:';...
+        pathname;
+        'Loading the following files into memory:';...
+        char(filename)};
+    
+    % Simulate log window in Command Window
+    for i = 1:numel(log_text)
+        disp(sprintf('%s',log_text{i}))
+    end
+    
+end
+
 % specify the file you want to process
-file = 12;
+file = '';
 % file = 'fle';
 % If you don't want to process all the transects that were checked in the
 % measurement file, then alter the for loop on line 447
