@@ -22,8 +22,8 @@ addpath 'version_3d4/'
 % Ask the user to select files:
 % -----------------------------
 % Hardcode default for now; can still select any other file
-default_path = 'D:\REPOS\QUant\data_in\05AE026_20100719_O_Connor_AQ1\';
-default_file = '05ae026_20100719.mmt';
+default_path = pwd;
+default_file = '';
 current_file = fullfile(default_path,default_file);
 [filename,pathname] = uigetfile({'*.mmt','WRII MMT-file'}, ...
     'Select the WRII MMT file to analyze', ...
