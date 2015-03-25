@@ -217,108 +217,34 @@ infile = [pathname filename];
 %%%%%%%%%%%%%%%%%%%%
 
 % Find WP
-
-clear indUse use
-use = [];
-skip = 0;
-try MMT_Active_Config.User_Commands;
-catch em
-    if strcmp(em.identifier, 'MATLAB:nonExistentField')
-        indUse = [];
-        skip = 1; % dont try to use the non existent field
-    end
+wp_user    = any(~cellfun('isempty',strfind(MMT_Active_Config.User_Commands,'WP')));
+wp_wizard  = any(~cellfun('isempty',strfind(MMT_Active_Config.Wizard_Commands,'WP')));
+wp_fixed   = any(~cellfun('isempty',strfind(MMT_Active_Config.Fixed_Commands,'WP')));
+if any(wp_user==true)
+    numPings = cell2mat(MMT_Active_Config.User_Commands(1,wp_user));
+    numPings = str2double(numPings(3:end));
+elseif any(wp_wizard==true)
+    numPings = cell2mat(MMT_Active_Config.Wizard_Commands(1,wp_wizard));
+    numPings = str2double(numPings(3:end));
+elseif any(wp_fixed==true)
+    numPings = cell2mat(MMT_Active_Config.Fixed_Commands(1,wp_fixed));
+    numPings = str2double(numPings(3:end));
 end
-clear em
-if skip == 0
-    indUse = find(strncmp('WP', MMT_Active_Config.User_Commands,2));
-end
-
-
-if  ~isempty(indUse)
-    use = char(MMT_Active_Config.User_Commands(indUse(1))); % use the first instance only
-    
-elseif isempty(use)
-    skip = 0;
-    try MMT_Active_Config.Wizard_Commands;
-    catch em
-        if strcmp(em.identifier, 'MATLAB:nonExistentField')
-            indUse = [];
-            skip = 1;
-        end
-    end
-    clear em
-    
-    if skip == 0
-        indUse = find(strncmp('WP', MMT_Active_Config.Wizard_Commands,2));
-    end
-    
-    
-    if ~isempty(indUse)
-        use = char(MMT_Active_Config.Wizard_Commands(indUse(1)));
-    else
-        use = MMT_Active_Config.Fixed_Commands(1,:);
-        if ~isempty(use)
-            [indUse] = find(strncmp('WP', use,2));
-            use = char(use(indUse(1)));
-        end
-    end
-end
-numPings = str2double(use(3:end));
-
-
 
 % find water mode
-clear indUse use
-use = [];
-skip = 0;
-
-try MMT_Active_Config.User_Commands;
-catch em
-    if strcmp(em.identifier, 'MATLAB:nonExistentField')
-        indUse = [];
-        skip = 1;
-    end
+wm_user    = any(~cellfun('isempty',strfind(MMT_Active_Config.User_Commands,'WM')));
+wm_wizard  = any(~cellfun('isempty',strfind(MMT_Active_Config.Wizard_Commands,'WM')));
+wm_fixed   = any(~cellfun('isempty',strfind(MMT_Active_Config.Fixed_Commands,'WM')));
+if any(wm_user==true)
+    wMode = cell2mat(MMT_Active_Config.User_Commands(1,wm_user));
+    wMode = str2double(wMode(3:end));
+elseif any(wm_wizard==true)
+    wMode = cell2mat(MMT_Active_Config.Wizard_Commands(1,wm_wizard));
+    wMode = str2double(wMode(3:end));
+elseif any(wm_fixed==true)
+    wMode = cell2mat(MMT_Active_Config.Fixed_Commands(1,wm_fixed));
+    wMode = str2double(wMode(3:end));
 end
-clear em
-
-if skip == 0
-    indUse = find(strncmp('WM', MMT_Active_Config.User_Commands,2));
-end
-
-
-if  ~isempty(indUse)
-    use = char(MMT_Active_Config.User_Commands(indUse(1))); % use the first instance only
-    
-elseif isempty(use)
-    skip = 0;
-    try MMT_Active_Config.Wizard_Commands;
-        
-    catch em
-        if strcmp(em.identifier, 'MATLAB:nonExistentField')
-            indUse = [];
-            skip = 1;
-        end
-    end
-    clear em
-    
-    if skip == 0
-        
-        indUse = find(strncmp('WM', MMT_Active_Config.Wizard_Commands,2));
-    end
-    
-    
-    if ~isempty(indUse)
-        use = char(MMT_Active_Config.Wizard_Commands(indUse(1)));
-    else
-        use = MMT_Active_Config.Fixed_Commands(1,:);
-        if ~isempty(use)
-            [indUse] = find(strncmp('WM', use,2));
-            use = char(use(indUse(1)));
-        end
-    end
-end
-
-wMode = str2double(use(3:end));
 
 %find WO command values
 subPings = 1;
