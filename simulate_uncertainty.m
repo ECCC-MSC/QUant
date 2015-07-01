@@ -489,7 +489,7 @@ nTransects = sum(MMT_Transects.Checked == 1);
 
 nStart = find(MMT_Transects.Checked,1, 'first'); % if you want to start at the first checked transect, should use this as the default
 Qbreakdown = cell(length(MMT_Transects.Checked));
-for nn = nStart%:length(MMT_Transects.Checked) % cycle through the transects to test
+for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to test
     
     
     % bcs you generally only want to use transects in a mmt file that have
