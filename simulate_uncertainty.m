@@ -620,8 +620,8 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
             % suggestions
             dat = { ...
                 0 0.05; ... % draft % don't change this to much smaller, we think it may go up and down 5 cm each way due to choppiness (see EJ's comments on deliverable 1)
-                0 0.1*lDist; ... % left dist 10% error
-                0 0.1*rDist; ... % right dist 10% error
+                0 0.3*lDist; ... % left dist 30% error  (per CMG 7/1/2015)
+                0 0.3*rDist; ... % right dist 30% error
                 0 2; ... % heading
                 0 2; ... % magnetic declination
                 0 2; ... % temperature
@@ -1160,24 +1160,25 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
                 
             end
             
-            
-            figure
-            [n, xout] = hist(Qtest_reBot,20); % make a 20 binned histogram of the discharge values
-            pdfQtest_reBot = (n/nr)/diff(xout(1:2)); % convert the histogram data to a pdf
-            % plot the pdf of the discharge
-            clf(gcf)
-            hl(1) = plot([Qnodist_reBot.qTot Qnodist_reBot.qTot], [0 max(pdfQtest_reBot)], 'k'); % the value when no uncertainty is included
-            hold on
-            hl(2) = plot(xout, pdfQtest_reBot, 'b.');
-            xplot = linspace(min(Qtest_reBot), max(Qtest_reBot));
-            hl(3) = plot(xplot, normpdf(xplot,mean(Qtest_reBot), std(Qtest_reBot)), '--r'); % plot a normal distribution for comparison
-            legend(hl, '"actual" value', 'Monte Carlo', 'Normal distribution')
-            title(['Discharge referenced to bottom track ', parameter, ' is varied'])
-            xlabel(['Discharge'])
-            ylabel(['Probability Density'])
-            ylim([0 max(pdfQtest_reBot)])
-            % plot out to +/- 5 std
-            xlim([Qnodist_reBot.qTot - 5*std(Qtest_reBot) Qnodist_reBot.qTot + 5*std(Qtest_reBot)])
+            if 0  % Turn on/off histogram/PDF plots of distributions with Monte Carlo obs.
+                figure
+                [n, xout] = hist(Qtest_reBot,20); % make a 20 binned histogram of the discharge values
+                pdfQtest_reBot = (n/nr)/diff(xout(1:2)); % convert the histogram data to a pdf
+                % plot the pdf of the discharge
+                clf(gcf)
+                hl(1) = plot([Qnodist_reBot.qTot Qnodist_reBot.qTot], [0 max(pdfQtest_reBot)], 'k'); % the value when no uncertainty is included
+                hold on
+                hl(2) = plot(xout, pdfQtest_reBot, 'b.');
+                xplot = linspace(min(Qtest_reBot), max(Qtest_reBot));
+                hl(3) = plot(xplot, normpdf(xplot,mean(Qtest_reBot), std(Qtest_reBot)), '--r'); % plot a normal distribution for comparison
+                legend(hl, '"actual" value', 'Monte Carlo', 'Normal distribution')
+                title(['Discharge referenced to bottom track ', parameter, ' is varied'])
+                xlabel(['Discharge'])
+                ylabel(['Probability Density'])
+                ylim([0 max(pdfQtest_reBot)])
+                % plot out to +/- 5 std
+                xlim([Qnodist_reBot.qTot - 5*std(Qtest_reBot) Qnodist_reBot.qTot + 5*std(Qtest_reBot)])
+            end
             
             display(['the uncertainty when ', parameter, ' is varied (in %) = ', num2str(100*std(Qtest_reBot)/mean(Qtest_reBot),3)])
            
