@@ -1,76 +1,25 @@
+clear all, close all
+set(0,'defaulttextinterpreter','tex')
 
-
-% Last modified 2014/09/17 by SAM changed transData(mm).velSysErrPct = 1.1
-% percent  to  [nrows,ncols]  = size(transData(mm).wVelerr);
-%      x = reshape(transData(mm).wVelerr, nrows*ncols,1);
-%      transData(mm).velSysErr = nanstd(x)
-%%%%%%%%%%%%
-% 14 July 2014:
-% - fixed a mistake with assigning "top" "bot" and "exponent",
-% there was an error in the index assignments
-% - added "Qbreakdown" to the list of variables that are saved
-% - line 436 changed for nn = nStart to ...
 
 % Add paths to folders that contain useful tools
 % ensure that these are the correct paths to the folders
 
 % EXAMPLE OF FOLDER PATH:
-addpath 'general/'
+addpath '../../general/'
 addpath 'tools/'
 addpath 'version_3d4/'
 
-% Ask the user to select files:
-% -----------------------------
-% Hardcode default for now; can still select any other file
-default_path = pwd;
-default_file = '';
-current_file = fullfile(default_path,default_file);
-[filename,pathname] = uigetfile({'*.mmt','WRII MMT-file'}, ...
-    'Select the WRII MMT file to analyze', ...
-    current_file, ...
-    'MultiSelect','off');
-
-if ischar(pathname) % The user did not hit "Cancel"
-    % Example snippet for adding persistent prefs if desired for a future
-    % GUI implementation:
-    %
-    % Update the preferences:
-    % -----------------------
-    %guiprefs = getappdata(handles.figure1,'guiprefs');
-    %guiprefs.ascii_path = pathname;
-    %guiprefs.ascii_file = filename;
-    %setappdata(handles.figure1,'guiprefs',guiprefs)
-    %store_prefs(handles.figure1,'pref_group_name')
-    
-    % Push messages to Log Window:
-    % ----------------------------
-    log_text = {...
-        '';...
-        ['%--- ' datestr(now) ' ---%'];...
-        'Current Project Directory:';...
-        pathname;
-        'Loading the following files into memory:';...
-        char(filename)};
-    
-    % Simulate log window in Command Window
-    for i = 1:numel(log_text)
-        disp(sprintf('%s',log_text{i}))
-    end
-    
-end
-
 % specify the file you want to process
-file = '';
-% file = 'fle';
-% If you don't want to process all the transects that were checked in the
-% measurement file, then alter the for loop on line 447
 
-% If you want to alter the number of runs, alter line 1088
+file = 33;
+% If you don't want to process all the transects that were checked in the
+% measurement file, then alter the for loop on line 362
+
+% If you want to alter the number of runs, alter line 969
 % START OF SWITCH LOOP WHERE NAMES OF FILES MUST BE ENTERED
 switch file
-    case 'fle'
-        pathname = 'D:\REPOS\QUant\data_in\05MJ001_20080604\Angus_Colin\';
-        filename = '05MJ001_20080604.mmt';
+    
     case 1 % Assiniboine Stn 05MH005 date 20110517 high flow % good, done July 8 2014
         % used in EC report
         pathname = 'G:\environment canada\data\ADCP measurements for Analysis\05MH005_20110517_aq1\';
@@ -111,11 +60,11 @@ switch file
     case 10 %  Data from D. Mueller
         pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\USGS Data\RG_1200\';
         filename = '02237700_020711_239.mmt';
-    case 11 % test of streampro data for S&T, Greg Bickerton
-        pathname = 'M:\My Network Documents\MATLAB\ADCP Uncertainty Analysis\QUant Matlab Code\code\data_in\MacKay_River_005_20140925_0\';
-        filename = 'MacKay River 005_20140925_0.mmt';
-    case 12 % used in paper submitted to JHE
-        pathname = 'D:\REPOS\QUant\data_in\05AE026_20100719_O_Connor_AQ1\';
+    case 11
+        
+    case 12 %
+        % used in paper submitted to JHE
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05AE026_20100719_O_Connor_AQ1\';
         filename = '05ae026_20100719.mmt';
     case 13 % DIDN'T work I get the following error: : An invalid XML character (Unicode: 0x8) was found in the element content of the document.
         pathname = 'G:\environment canada\data\ADCP measurements for Analysis\accreditation\05BM002_20090818_O_Connor_AQ1\';
@@ -164,30 +113,33 @@ switch file
         pathname = 'G:\environment canada\data\ADCP measurements for Analysis\accreditation\10GC003_20050507_AQ1\';
         filename = '10GC003_20050507.mmt';
         
-    case 27 % Assiniboine near Headingly MB Angus_Colin % good done as of 10 july 2014
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Angus_Colin\';
-        %pathname = 'G:\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Angus_Colin\';
+    case 27 % Assiniboine near Headingly MB Angus_Colin
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Angus_Colin\';
         filename = '05MJ001_20080604.mmt';
     case 28 % Assiniboine near Headingly MB Hardy_Karen % good done as of 10 july 2014
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Hardy_Karen\';
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Hardy_Karen\';
         filename = '05MJ001_20080604.mmt';
     case 29 % Assiniboine near Headingly MB Hood_Dan
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Hood_Don\';
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Hood_Don\';
         filename = 'Assiniboine River near Headingly.mmt';
     case 30 % Assiniboine near Headingly MB Selinger_Dan
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Selinger_Dan\';
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05MJ001_20080604\Selinger_Dan\';
         filename = '05MJ001_20080604.mmt';
     case 31 %Whitemouth near Whitemouth Colin Angus
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Angus_Colin\';
+        % used in jhe paper
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Angus_Colin\';
         filename = '05PH003_20080603.mmt';
     case 32
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Hardy_Karen\';
+        % used in jhe paper
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Hardy_Karen\';
         filename = '05PH003_20080603.mmt';
     case 33
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Hood_Don\';
+        % used in jhe paper
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Hood_Don\';
         filename = '05PH003_20080603.mmt';
     case 34
-        pathname = 'C:\Users\Collin Rennie\Documents\Moore\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Selinger_Dan\';
+        % used in jhe paper
+        pathname = 'C:\Users\Stephanie\Documents\environment canada\data\ADCP measurements for Analysis\accreditation\05PH003_20080603\Selinger_Dan\';
         filename = '05PH003_20080603.mmt';
         
 end
@@ -435,22 +387,20 @@ elseif isempty(use)
 end
 
 cellSize = str2double(use(3:end));
-% %%%%%%%%%%%%%%%%%%%%%%
-%   delete extrap_summary.mat %this deletes old summary information if it exists.
-% 
-%   uiwait(msgbox('The GUI entitiled "extrap - Beta 3.4" is about to open. Click on "Open .mmt file" and select the file you are currently analyzing. Once the code has run, click on "Save Summary". Next, close the GUI so that discharge calculation can continue','Instructions','modal'));
-% 
-%   handle1 = extrap3;
-% 
-%   uiwait(handle1) %once the window
+% %%%%%%%%%%%%%%%%%%
+delete extrap_summary.mat %this deletes old summary information if it exists.
 
-%until I have the curve fitting toolbox, input extrap results manually
+uiwait(msgbox('The GUI entitiled "extrap - Beta 3.4" is about to open. Click on "Open .mmt file" and select the file you are currently analyzing. Once the code has run, click on "Save Summary". Next, close the GUI so that discharge calculation can continue','Instructions','modal'));
+
+handle1 = extrap3;
+
+uiwait(handle1) %once the window
+
+
 load extrap_summary.mat
-% 
-% extrapDev = abs(str2double(QStats{2,3})); % percentage deviation from the default (Power-Power 1/6th exponent)
-% 
-extrapDev = 0.64; %this is the value for MacKay_River_005_20140925_0
+extrapDev = abs(str2double(QStats{2,3})) % percentage deviation from the default (Power-Power 1/6th exponent)
 
+return
 %% possibleParameters is the list of parameters that will be tested
 
 possibleParameters = {'all', 'bottom depth', 'water velocity', 'bottom velocity', ...
@@ -497,11 +447,11 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
     if MMT_Transects.Checked(nn) > 0
         mm = mm+1; % index of the structure parameters
         clearvars -except Qbreakdown FitStats file mm doneDisplay MMT* numPings wMode subPings cellSize nn pathname transData parameters uncert possibleParameters nTransects extrapDev % clear all variables except those listed
-        
-        %%%%%%%%%%%%%%%%%%%%%
-        % If you aren't using extrap3.m to determine the best top and
-        % bottom extrapolation methods
-        
+        %%
+        %         %%%%%%%%%%%%%%%%%%%%%
+        %         % If you aren't using extrap3.m to determine the best top and
+        %         % bottom extrapolation methods
+        %
         %         if MMT_Active_Config.Q_Top_Method(nn) == 0;
         %             top = 'Power';
         %         elseif MMT_Active_Config.Q_Top_Method(nn) == 1;
@@ -515,12 +465,11 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         %         elseif MMT_Active_Config.Q_Bottom_Method(nn) == 2;
         %             bot = 'no-slip';
         %         end
-        %%%%%%%%%%%%%%%%
-        % before July 14 2014 was:
-        %         top = FitStats{nn+1,2};
-        %         bot = FitStats{nn+1,3};
-        %         exponent = FitStats{nn+1,4};
-        % after July 14 was:
+        %         exponent = MMT_Active_Config. Q_Power_Curve_Coeff(mm)
+        
+        %%
+        % if you're using the output from extrap
+        %%%%%%%%%%%%%%%%%%
         top = FitStats{mm+1,2};
         bot = FitStats{mm+1,3};
         exponent = FitStats{mm+1,4};
@@ -606,7 +555,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
             
             tUserInputs =  uitable('Units', 'normalized',  'Position', [t1x t1by t1width t1height], 'Data', dat, ...  %can start out with % 'Parent', fh,
                 'ColumnName', cnames, 'RowName', rnames, 'ColumnEditable', columneditable);
-            uicontrol('Parent', f, 'Style', 'text', 'units', 'normalized', 'Position', [t1x t1ty t1width 0.05], 'String', 'Values from MMT file', 'fontsize', 20)
+            uicontrol('Parent', f, 'Style', 'text', 'units', 'normalized', 'Position', [t1x t1ty t1width 0.05], 'String', 'Values from MMT file', 'fontsize', 14)
             
             %%%%
             % A table that displays the parameters for the normal distributions
@@ -620,8 +569,8 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
             % suggestions
             dat = { ...
                 0 0.05; ... % draft % don't change this to much smaller, we think it may go up and down 5 cm each way due to choppiness (see EJ's comments on deliverable 1)
-                0 0.1*lDist; ... % left dist 10% error
-                0 0.1*rDist; ... % right dist 10% error
+                0 0.3*lDist; ... % left dist 30% error
+                0 0.3*rDist; ... % right dist 30% error
                 0 2; ... % heading
                 0 2; ... % magnetic declination
                 0 2; ... % temperature
@@ -632,7 +581,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
                 % the value of 10% was obtained by analysing results of Dramais 2011 (Engineering degree thesis) and from the excel worksheet "Error Analysis Spreadsheet Modified 2" that I was given with the project documentation
                 
                 };
-            columneditable =  [ true true];
+            columneditable =  [true true];
             columnformat = {'numeric', 'numeric'};
             
             % position of the table
@@ -642,14 +591,14 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
             t2height = 0.5;
             t2ty = t2by + t2height;
             
-            uicontrol('Style', 'text', 'units', 'normalized', 'Position', [t2x t2ty t2width 0.05], 'String', 'Uncertainty to test: pls modify values then click continue', 'fontsize', 22)
+            uicontrol('Style', 'text', 'units', 'normalized', 'Position', [t2x t2ty t2width 0.05], 'String', 'Uncertainty to test: pls modify values then click continue', 'fontsize', 16)
             
             
             
             tUncert =  uitable('Units', 'normalized',  'Position', [t2x t2by t2width t2height], 'Data', dat, ...
                 'ColumnName', cnames, 'RowName', rnames, 'ColumnEditable', columneditable);
             
-            uicontrol('Style', 'text', 'units', 'normalized', 'Position', [t2x t2ty t2width 0.05], 'String', 'Uncertainty to test', 'fontsize', 22)
+            uicontrol('Style', 'text', 'units', 'normalized', 'Position', [t2x t2ty t2width 0.05], 'String', 'Uncertainty to test', 'fontsize', 16)
             %display('Please modify the uncertainty parameters and then type return. Do not close the GUI')
             %keyboard
             uicontrol('Position', [20 20 200 40], 'String', 'Continue', ...
@@ -679,6 +628,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         transData(mm).hheading.meanErr = uncert{4,1};
         transData(mm).hheading.stdErr = uncert{4,2};
         
+        
         transData(mm).mmagDec.mean = transData(mm).magDec;
         transData(mm).mmagDec.meanErr = uncert{5,1};
         transData(mm).mmagDec.stdErr = uncert{5,2};
@@ -701,75 +651,74 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         transData(mm).rrightCoef.meanErr = uncert{10,1};
         transData(mm).rrightCoef.stdErr = uncert{10,2};
         
-        %%
-        %%%%%%%%%%%%%%
-        % velocity uncertainty in m/s taken from Table 5, p. 97 of the
-        % Winriver II User Guide (P/N 957-6231-00, February 2007) this is
-        % the single ping standard deviation, except for mode 12 for which
-        % it is the uncertainty for WO20,4 (20 subpings) these are the
-        % values for the recommended cell size 600 kHz: WM1=50 cm;
-        % WM12,11,5,8 = 25cm 1200 kHz: WM1 = 25cm, WM12 = 10 cm; WM11 = 5
-        % cm, WM5 and WM8 = 10 cm WM12 WO20,4
-        %%%%%%%%%%%%%%
-        switch wMode
-            case 1
-                vErr = [0.1362; 0.1364];
-                
-            case 12
-                vErr = [0.0624; 0.0695];
-                % for workhorse monitor = [0.3703; 0.1882;] for streampro
-                % it is apparently 2 mm/s (see line 379)
-                
-            case 11
-                vErr = [0.0074; 0.0134];
-                
-            case 5
-                vErr = [0.0033; 0.0044];
-                
-            case 8
-                vErr = [0.0334; 0.0515];
-        end
         
-        display ('The single ping velocity uncertainty from table 5 of the Winriver II user guide (Feb 2007) is used')
-        
+        velNoise = abs(transData(mm).wVelerr);
+        [nrows, ncols] = size(velNoise);
+        for ii = 1:nrows
+            
+            [indBad] = find(isnan(velNoise(ii,:)));
+            [indGood] = find(~isnan(velNoise(ii,:)));
+            for jj = 1:length(indBad)
                 
-        % divide the single ping uncertainty by the sqrt of the number of
-        % pings
-        if transData(mm).freq == 600
-            transData(mm).velErr = vErr(1)/sqrt(numPings);
-            if subPings > 1
-                transData(mm).velErr = (vErr(1)/sqrt(subPings))/sqrt(numPings);
+                previousGoodEns = indGood(find(indGood < indBad(jj) , 1, 'last'));
+                nextGoodEns = indGood(find(indGood > indBad(jj) , 1, 'first'));
+                if ~isempty(previousGoodEns) && ~isempty(nextGoodEns)
+                    velNoise(ii,indBad(jj)) = (velNoise(ii, previousGoodEns) + velNoise(ii, nextGoodEns))/2;
+                elseif previousGoodEns
+                    velNoise(ii,indBad(jj)) = velNoise(ii, previousGoodEns);
+                elseif nextGoodEns
+                    velNoise(ii,indBad(jj)) = velNoise(ii, nextGoodEns);
+                else
+                    velNoise(ii,indBad(jj)) = 0;
+                end
+                
             end
             
-        elseif transData(mm).freq == 1200
-            transData(mm).velErr = vErr(2)/sqrt(numPings);
-            if subPings > 1
-                transData(mm).velErr = (vErr(2)/sqrt(subPings))/sqrt(numPings);
-            end
-        elseif transData(mm).freq == 2400 % streampro
-            transData(mm).velErr = 2E-3; %m/s
-            
-            % according to p 84 of the May 2013 version of the streampro
-            % manual, the velocity accuracy is 1%, +/- 2mm I assume that
-            % this is for the default settings, which for the streampro are
-            % WM12, WP6 note, these are the commands that were used for the
-            % Graham Creek data
         end
-        % prior to 8 aout 2014 was:
-        % systematic error that does not depend on number of pings
-        %        transData(mm).velSysErrPct = 1.1; % from Oberg 2007
-        %%%%%%%%%%%%%%
-        [nrows,ncols]  = size(transData(mm).wVelerr);
-        x = reshape(transData(mm).wVelerr, nrows*ncols,1);
-        transData(mm).velSysErr = nanstd(x);
         
         
-        % prior to 8 aout 2014 was:  transData(mm).velBtErrPct = 0.5; % from Oberg 2007
-        transData(mm).velBtErr = nanstd(transData(mm).btVel(4,:));
-        %transData(mm).velBtErrPct = 0.5; % from Oberg 2007
-        transData(mm).depthErrPct = 2; % from Simpson 2001
+        % because sometimes the bottom error velocity can be NaN even
+        % if there are bottom velocity measurements
+        btVelNoise = abs(transData(mm).btVel(4,:));
+        [indBad] = find(isnan(btVelNoise));
+        [indGood] = find(~isnan(btVelNoise));
+        
+        for ii = 1:length(indBad)
+            previousGoodEns = indGood(find(indGood < indBad(ii) , 1, 'last'));
+            nextGoodEns = indGood(find(indGood > indBad(ii) , 1, 'first'));
+            if ~isempty(previousGoodEns) && ~isempty(nextGoodEns)
+                btVelNoise(indBad(ii)) = (btVelNoise( previousGoodEns) + btVelNoise( nextGoodEns))/2;
+            elseif previousGoodEns
+                btVelNoise(indBad(ii)) = btVelNoise( previousGoodEns);
+            elseif nextGoodEns
+                btVelNoise(indBad(ii)) = btVelNoise( nextGoodEns);
+            else
+                btVelNoise(indBad(ii)) = 0;
+            end
+        end
         
         
+        depthNoise = std(transData(mm).beamDepths);
+        [indBad] = find(isnan( depthNoise));
+        [indGood] = find(~isnan( depthNoise));
+        
+        for ii = 1:length(indBad)
+            previousGoodEns = indGood(find(indGood < indBad(ii) , 1, 'last'));
+            nextGoodEns = indGood(find(indGood > indBad(ii) , 1, 'first'));
+            if ~isempty(previousGoodEns) && ~isempty(nextGoodEns)
+                depthNoise(indBad(ii)) = ( depthNoise( previousGoodEns) +  depthNoise( nextGoodEns))/2;
+            elseif previousGoodEns
+                depthNoise(indBad(ii)) =  depthNoise( previousGoodEns);
+            elseif nextGoodEns
+                depthNoise(indBad(ii)) =  depthNoise( nextGoodEns);
+            else
+                depthNoise(indBad(ii)) = 0;
+            end
+        end
+        
+        transData(mm).velErr = velNoise;
+        transData(mm).velBtErr = btVelNoise;
+        transData(mm).depthErr = depthNoise;
         
         %%
         %%%%%%%%%%%%%%%%%%%%%
@@ -778,6 +727,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         % list of arguements: input file, boat velocity reference, (1 or 0)
         % create a figure of the velocity data (1) or not (0)
         Qnodist_reBot = Discharge_sm(transData(mm), 'bot',1);
+        
         if isfinite(abs(Qnodist_reBot.qIntEns -  Qnodist_reBot.qIntEns2))
             forQintEns_reBot = abs(Qnodist_reBot.qIntEns -  Qnodist_reBot.qIntEns2)/ abs(Qnodist_reBot.qIntEns);
         else
@@ -812,15 +762,11 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         % all, bot depth, wat vel, bot vel, temp, salinity, draft, heading, ...
         % mag dec, L dist, R dist L edge vel, R edge vel, extrap method top and bot, ...
         % left coef, right coef, missing ensembles;
-        
         pp = 1;
-        while pp <= length(possibleParameters)
-              
-%             pp = 1; % if only want to assess uncertainty of all parameters
-%             while pp == 1
+            while pp == 1
+        
+       % while pp <= length(possibleParameters)
             
-            % pp = 8; % if only heading ;
-            % while pp == 8
             
             clear Qtest*
             
@@ -972,6 +918,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
                     varyREC = 0;
                     varyQINTENS = 0;
                     
+                    
                 case 'magnetic declination'
                     varyBD = 0;
                     varyWV = 0;
@@ -1080,7 +1027,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
                     varyREC = 0;
                     varyQINTENS = 0;
                     
-                case 'left coeff'
+                case 'left coef'
                     varyBD = 0;
                     varyWV = 0;
                     varyBV = 0;
@@ -1098,7 +1045,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
                     varyREC = 0;
                     varyQINTENS = 0;
                     
-                case 'right coeff'
+                case 'right coef'
                     varyBD = 0;
                     varyWV = 0;
                     varyBV = 0;
@@ -1135,21 +1082,25 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
                     
             end
             
+            
             nr = 1000; % number of Monte Carlo realizations - recommend using 1000 for test runs
-            display(['number or Monte Carlo realizations = ', num2str(nr),3])
             
             Qtest_reBot = NaN*ones(1,nr);
             if gpsData
                 Qtest_reGGA = NaN*ones(1,nr);
                 Qtest_reVTG = NaN*ones(1,nr);
             end
+            
+            
             for rr = 1:nr
                 clear dataOut Q_re*
                 
                 dataOut = MC_Data(filename, transData(mm), varyT, varyS, varyD, varyH, varyMG, varyRD, varyLD, varyREC, varyLEC, varyWV, varyBV, varyBD);
+
                 
                 Q_reBot = Discharge_sm(dataOut, 'bot', 0, varyLEV, varyREV, varyQEXTPTB, varyQINTENS, forQintEns_reBot);
                 Qtest_reBot(rr) = real(Q_reBot.qTot); % havent taken the time to figure out why, but there are sometimes complex
+                
                 
                 if gpsData % if there is gps data
                     Q_reGGA = Discharge_sm(dataOut, 'gga', 0, varyLEV, varyREV, varyQEXTPTB, varyQINTENS, forQintEns_reGGA);
@@ -1162,6 +1113,7 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
             
             
             figure
+            set(0,'defaulttextinterpreter','tex')
             [n, xout] = hist(Qtest_reBot,20); % make a 20 binned histogram of the discharge values
             pdfQtest_reBot = (n/nr)/diff(xout(1:2)); % convert the histogram data to a pdf
             % plot the pdf of the discharge
@@ -1170,17 +1122,17 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
             hold on
             hl(2) = plot(xout, pdfQtest_reBot, 'b.');
             xplot = linspace(min(Qtest_reBot), max(Qtest_reBot));
-            hl(3) = plot(xplot, normpdf(xplot,mean(Qtest_reBot), std(Qtest_reBot)), '--r'); % plot a normal distribution for comparison
-            legend(hl, '"actual" value', 'Monte Carlo', 'Normal distribution')
+            hl(3) = plot(xplot, normpdf(xplot,mean(Qtest_reBot), std(Qtest_reBot)), '-r'); % plot a normal distribution for comparison
+            legend(hl, 'WinRiver II Output', 'QUant results', 'Gaussian fit')
             title(['Discharge referenced to bottom track ', parameter, ' is varied'])
-            xlabel(['Discharge'])
-            ylabel(['Probability Density'])
-            ylim([0 max(pdfQtest_reBot)])
-            % plot out to +/- 5 std
-            xlim([Qnodist_reBot.qTot - 5*std(Qtest_reBot) Qnodist_reBot.qTot + 5*std(Qtest_reBot)])
+            % ylim([0 max(pdfQtest_reBot)])
+            xlabel('Discharge [m^3/s]')
+            ylabel('Probability density')
             
-            display(['the uncertainty when ', parameter, ' is varied (in %) = ', num2str(100*std(Qtest_reBot)/mean(Qtest_reBot),3)])
-           
+            % plot out to +/- 5 std
+            % xlim([Qnodist_reBot.qTot - 5*std(Qtest_reBot) Qnodist_reBot.qTot + 5*std(Qtest_reBot)])
+            
+            display(['the uncertainty in percent is ', num2str(100*std(Qtest_reBot)/mean(Qtest_reBot),3)])
             if gpsData
                 display(['the uncertainty for gga ref data in percent is ', num2str(100*std(Qtest_reGGA)/mean(Qtest_reGGA),3)])
                 
@@ -1228,39 +1180,48 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         end
         parameters.transno(mm) = nn; % transect number
         parameters.data{mm} = transData(mm); % input data
+        
+        
+        parameters.frac_reBot(mm,:) =  parameters.perErr_reBot(mm,2:end)./sum(parameters.perErr_reBot(mm,2:end))
+        
+        figure
+        
+        hp = pie(real(parameters.frac_reBot(mm,:)));
+        [ax,leg] = legend(hp(1:2:end), parameters.name(2:end)');
+        set(ax, 'position', [0.8 0.3 .01 .01], 'units', 'normalized') % cant put it any further left
+        title(['Transect ', num2str(mm), ': \sigma_{QUant} =  ', num2str(real(parameters.perErr_reBot(mm,1)),2),'% of ', num2str(parameters.meanQ_reBot(mm),4), ' m^3/s'], 'units', 'normalized')
+        legend boxoff
+        set(gca, 'fontsize', 8.5)
+        if gpsData
+            parameters.frac_reVTG(mm,:) =  parameters.perErr_reVTG(mm,2:end)./sum(parameters.perErr_reVTG(mm,2:end))
+            parameters.frac_reGGA(mm,:) =  parameters.perErr_reGGA(mm,2:end)./sum(parameters.perErr_reGGA(mm,2:end))
+            figure
+            pie(real(parameters.perErr_reGGA(mm,2:end)), parameters.name(2:end)')
+            text(-0.05, -0.05, ['One standard deviation is ', num2str(real(parameters.perErr_reGGA(mm,1)),2),'%'], 'units', 'normalized')
+            title(['Transect ', num2str(mm)])
+            
+        end
+        
     end
-    
-    %     parameters.frac_reBot(mm,:) =  parameters.perErr_reBot(mm,2:end)./sum(parameters.perErr_reBot(mm,2:end))
-    %     if gpsData
-    %         parameters.frac_reVTG(mm,:) =  parameters.perErr_reVTG(mm,2:end)./sum(parameters.perErr_reVTG(mm,2:end))
-    %         parameters.frac_reGGA(mm,:) =  parameters.perErr_reGGA(mm,2:end)./sum(parameters.perErr_reGGA(mm,2:end))
-    %         figure
-    %         pie(real(parameters.perErr_reGGA(mm,2:end)), parameters.name(2:end)')
-    %         text(-0.05, -0.05, ['One standard deviation is ', num2str(real(parameters.perErr_reGGA(mm,1)),2),'%'], 'units', 'normalized')
-    %         title(['Transect ', num2str(mm)])
-    %
-    %     end
-    % moved by sam on 14 july 2014
-    %  parameters.transno(mm) = nn; % transect number
-    %  parameters.data{mm} = transData(mm); % input data
     
     Qbreakdown{mm} = Qnodist_reBot;
     
-    %   pause
 end
+
+
 
 % to see how the different factors contribute
 % meanQ_reBot = nanmean(parameters.meanQ_reBot(:,1)); % the mean of the discharge from each transect (no uncertainty included)
-% 
+%
 % 100*nanstd(parameters.meanQ_reBot(:,1))/meanQ_reBot; % percent deviation between transects
-% 
+%
 % sqrt(nansum(parameters.perErr_reBot(:,1).^2))/ sqrt(sum(parameters.transno>0)); % total error of the measurement from monte carlo analysis
 
 % START OF SWITCH LOOP PERTAINING TO SAVING THE OUTPUT.
 
 % Save format: "save" "filename" "parameters to write to that file"
-
 return
+
 switch file
     
     case 1 % Assiniboine Stn 05MH005 date 20110517 high flow
@@ -1288,12 +1249,12 @@ switch file
     case 11
         
     case 12 % for the sensititivy analysis for JHE paper, do 30%, 10% and 50% for the edge distance
-      %  save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05AE026_20100719_edge_err_50pct.mat', 'parameters', 'Qbreakdown')
+        save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05AE026_20100719_O_Connor_AQ1.mat', 'parameters', 'Qbreakdown')
         % save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05AE026_20100719_edge_err_10pct.mat', 'parameters', 'Qbreakdown')
-        %save ('C:\Users\Collin Rennie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05AE026_20100719_O_Connor_AQ1.mat', 'parameters', 'Qbreakdown')
-        %save 05BM002_20090818_O_Connor_AQ1 parameters
-        save ('M:\My Network Documents\MATLAB\ADCP Uncertainty Analysis\QUant Matlab Code\code\data_out\Testing\05AE026_20100719_O_Connor_AQ1.mat', 'parameters', 'Qbreakdown')
+        % save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05AE026_20100719_edge_err_50pct.mat', 'parameters', 'Qbreakdown')
         
+    case 13
+        save 05BM002_20090818_O_Connor_AQ1 parameters
     case 14
         save 05BN012_20100720 parameters
     case 15
@@ -1312,9 +1273,10 @@ switch file
     case 21
         save 05OC001_20040428 parameters
     case 22
-       %save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05OJ010_20040504_edge_err_10pct.mat', 'parameters', 'Qbreakdown')
-        %save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05OJ010_20040504_edge_err_50pct.mat', 'parameters', 'Qbreakdown')
-        %save ('C:\Users\Collin Rennie\Documents\MATLAB\work/enviro_can/testing_sm/good_data/05OJ010_20040504.mat', 'parameters', 'Qbreakdown')
+        save ('C:\Users\Stephanie\Documents\MATLAB\work/enviro_can/testing_sm/good_data/05OJ010_20040504.mat', 'parameters', 'Qbreakdown') % 30% error
+        %  save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05OJ010_20040504_edge_err_10pct.mat', 'parameters', 'Qbreakdown')
+       %  save ('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm\good_data\05OJ010_20040504_edge_err_50pct.mat', 'parameters', 'Qbreakdown')
+        
     case 23
         save 07be001_20030918 parameters
     case 24
@@ -1324,21 +1286,24 @@ switch file
     case 26
         
     case 27
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_angus_colin.mat', 'parameters')
-    case 28 % modified at the end of the day 14 july 2014
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_hardy_karen.mat', 'parameters', 'Qbreakdown')
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_angus_colin.mat', 'parameters', 'Qbreakdown')
+    case 28
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_hardy_karen.mat', 'parameters', 'Qbreakdown')
     case 29
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_hood_don.mat', 'parameters')
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_hood_don.mat', 'parameters', 'Qbreakdown')
     case 30
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_selinger_dan.mat', 'parameters')
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05MJ001_20080604_selinger_dan.mat', 'parameters', 'Qbreakdown')
     case 31
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_angus_colin.mat', 'parameters')
+        % save('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm/good_data/05PH003_20080603_angus_colin.mat', 'parameters', 'Qbreakdown')
+       % save('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm/good_data/05PH003_20080603_angus_colin_trans1_500realizations.mat', 'parameters', 'Qbreakdown')
+ save('C:\Users\Stephanie\Documents\MATLAB\work\enviro_can\testing_sm/good_data/05PH003_20080603_angus_colin_trans1_2000realizations.mat', 'parameters', 'Qbreakdown')
+
+       
     case 32
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_hardy_karen.mat', 'parameters')
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_hardy_karen.mat', 'parameters', 'Qbreakdown')
     case 33
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_hood_don.mat', 'parameters')
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_hood_don.mat', 'parameters', 'Qbreakdown')
     case 34
-        save('C:/Users/Collin Rennie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_selinger_dan.mat', 'parameters')
+        save('C:/Users/Stephanie/Documents/MATLAB/work/enviro_can/testing_sm/good_data/05PH003_20080603_selinger_dan.mat', 'parameters', 'Qbreakdown')
         
 end
-
