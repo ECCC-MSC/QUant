@@ -210,17 +210,17 @@ classdef Discharge_sm
             else
                 direc=-1;
             end
-            
-            xprod=xprod.*direc;
-            
-            % in case there's something wrong with the mmt file and it
-            % can't read the start and end bank correctly, this little
-            % cheating works
-          
-            if nanmean(nanmean(xprod)) < 0 % the wrong start bank was used so the velocities have the wrong sign
-                
-                xprod = -xprod;
-            end
+             
+             xprod=xprod.*direc;
+             
+%             % in case there's something wrong with the mmt file and it
+%             % can't read the start and end bank correctly, this little
+%             % cheating works
+%           
+%             if nanmean(nanmean(xprod)) < 0 % the wrong start bank was used so the velocities have the wrong sign
+%                 
+%                 xprod = -xprod;
+%             end
             
            
             
@@ -241,7 +241,7 @@ classdef Discharge_sm
                 set(gca, 'ydir', 'rev')
                 set(hp,'edgecolor','none')
                 shading flat
-                plot(length_refBT, useData.depthEns, 'k-.', 'linewidth', 1.5)
+                plot(length_refBT, useData.depthEns, 'k-', 'linewidth', 1.5)
                 xlabel(['Length (Ref: ', navRef, ') [m]'], 'fontsize', 16)
                 ylabel('Depth [m]', 'fontsize', 16)
                 set(gca, 'box', 'on')
@@ -254,11 +254,11 @@ classdef Discharge_sm
                 set(gca, 'ydir', 'rev')
                 set(hp,'edgecolor','none')
                 shading flat
-                plot(length_refBT, useData.depthEns, 'k-.', 'linewidth', 1.5)
+                plot(length_refBT, useData.depthEns, 'k-', 'linewidth', 1.5)
                 xlabel(['Length (Ref: ', navRef, ') [m]'], 'fontsize', 16)
                 ylabel('Depth [m]', 'fontsize', 16)
                 set(gca, 'box', 'on')
-                title('Cross product')
+                title('Cross product: wVel_x bVel_y - wVel_y bVel_x')
                 colorbar
                 
             end
@@ -368,11 +368,26 @@ classdef Discharge_sm
                 obj.qIntEns2 = qMid2 + qIntCells2 + qTop2 + qBot2 - qMidNI - qTopNI - qBotNI;
             end
             
-            
-            
+   
+           % obj.qTot
+            % obj.qMid % the same
+           % obj.qTop % it's different
+          % obj.qBot % qBot is different
+         % obj.left % the same
+%          obj.right
+        %    pause
+%             obj.qIntEns
+         %    pause
             obj.qTot = obj.qTot + varyQINTENS*obj.qIntEns*random('norm', 0, forQintUncert,1,1);
-            
+        %   obj.qTot
+           %obj.qMid % the same
+        %   obj.qTop % top is different
+          % obj.qBot % qBot is different
+          % obj.left % same
+        %  obj.right
+        %   pause
           
+      
             % forQintUncert is the uncertainty as a fraction of qIntEns, 
             % it is calculated as  (Qnodist_reBot.qIntEns -  Qnodist_reBot.qIntEns2)/ Qnodist_reBot.qIntEns
             
@@ -601,12 +616,13 @@ classdef Discharge_sm
             % direction as the flow direction
             %%tellStephAveXprodUsedForEdge = nanmean(nanmean(xprod))
             %keyboard
-            if nanmean(nanmean(xprod)) < 0 % the wrong start bank was used so the velocities have the wrong sign
-                xprod = -xprod;
-            end
+%             if nanmean(nanmean(xprod)) < 0 % the wrong start bank was used so the velocities have the wrong sign
+%                 xprod = -xprod;
+%             end
             
             % add uncertainty to the velocity used for the edge estimate
-            % edgeStd is a percentage of the mean
+            % edgeStd is the standard deviation of the velocity is all
+            % cells used for edge velocity
             edge=edgeCoef.*depthAvg.*edgeMag.*edgeDist.*sign(xprod).*(1 + varyEdgeVel*random('norm', 0, edgeStd,1, 1));
             
         end

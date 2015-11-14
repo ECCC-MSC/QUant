@@ -19,6 +19,8 @@ classdef OriginData_sm
         rDist
         lDist
         heading
+        pitch
+        roll
         startBank
         leftCoef        % coefficient for edge estimate
         rightCoef       % coefficient for edge estimate
@@ -86,9 +88,8 @@ classdef OriginData_sm
         ttemperature
         ssalinity
         velErr % initialized by not used here
-        velSysErr % initialized but not used here
         velBtErr % initialized but not used here
-        depthErrPct % initialized but not used here
+        depthErr % initialized but not used here
         QextrapTBErrPct  % initialized but not used here
         lleftCoef % initialized but not used here
         rrightCoef % initialized but not used here
@@ -143,25 +144,25 @@ classdef OriginData_sm
                 beginDist = MMT_Active_Config.Edge_Begin_Shore_Distance(nn);
                 endDist = MMT_Active_Config.Edge_End_Shore_Distance(nn);
                 
-                 beginL = MMT_Active_Config.Edge_Begin_Left_Bank(nn);
-            
-            if beginL == 0; 
-                beginR = 1;
-            elseif beginL == -1;
-                beginL = 0;
-                beginR = 1;
-            end
-            obj.lDist = beginDist*abs(beginL);
-            if obj.lDist == 0
-                obj.lDist = endDist;
-            end
-            obj.rDist = beginDist*beginR;
-            if obj.rDist == 0
-                obj.rDist = endDist;
-            end
+                beginL = MMT_Active_Config.Edge_Begin_Left_Bank(nn);
                 
-
-             
+                if beginL == 0;
+                    beginR = 1;
+                elseif beginL == -1;
+                    beginL = 0;
+                    beginR = 1;
+                end
+                obj.lDist = beginDist*abs(beginL);
+                if obj.lDist == 0
+                    obj.lDist = endDist;
+                end
+                obj.rDist = beginDist*beginR;
+                if obj.rDist == 0
+                    obj.rDist = endDist;
+                end
+                
+                
+                
                 obj.leftCoef = MMT_Active_Config.Q_Left_Edge_Coeff(nn);
                 obj.rightCoef = MMT_Active_Config.Q_Right_Edge_Coeff(nn);
                 obj.leftNumEns2Avg = MMT_Active_Config.Q_Shore_Pings_Avg(nn);
@@ -173,13 +174,15 @@ classdef OriginData_sm
                 obj.exponent = exponent;
                 % if not using extrap3
                 %                 obj.topMethod = MMT_Active_Config.Q_Top_Method(nn);
-%                 obj.botMethod = MMT_Active_Config.Q_Bottom_Method(nn);
-%                 obj.exponent = MMT_Active_Config.Q_Power_Curve_Coeff(nn);
+                %                 obj.botMethod = MMT_Active_Config.Q_Bottom_Method(nn);
+                %                 obj.exponent = MMT_Active_Config.Q_Power_Curve_Coeff(nn);
                 %
                 % Check file validity
                 % -------------------
                 if isstruct(Hdr)
                     obj.heading=Sensor.heading_deg' + obj.magDec;
+                    obj.pitch = Sensor.pitch_deg';
+                    obj.roll = Sensor.roll_deg';
                     %
                     % Retrieve data to compute sidelobe
                     % ---------------------------------
@@ -221,7 +224,7 @@ classdef OriginData_sm
                     lagEffect_m=(lag+pulseLen+regCellSize)./2;
                     depthmin=nanmin(obj.beamDepths);
                     lastcell=depthmin.*cosd(Inst.beamAng(1)')-(lagEffect_m);
-             
+                    
                     obj.numCells=max([floor(((lastcell-cell1Dist)./regCellSize)+1); zeros(size(lastcell))],[],1);
                     obj.numCells(obj.numCells>numRegCells)=numRegCells;
                     if nanmax(noSurfCells)>0
@@ -232,9 +235,9 @@ classdef OriginData_sm
                     % Create matrix with only cells above sidelobe
                     % ---------------------------------------------
                     obj.cellsAboveSL=ones(obj.maxCells,obj.numEns);
-                    for j=1:obj.numEns
-                        for i=obj.numCells(j)+1:obj.maxCells
-                            obj.cellsAboveSL(i,j)=nan;
+                    for jj=1:obj.numEns
+                        for i=obj.numCells(jj)+1:obj.maxCells
+                            obj.cellsAboveSL(i,jj)=nan;
                         end
                     end
                     %
@@ -243,7 +246,12 @@ classdef OriginData_sm
                     
                     %
                     % Create variables for transformation matrix (instrument to earth)
+
                     % ----------------------------------------------------------------
+                         % see correspondence from D. Mueller on 2015-08-12 on why pitch
+            % and roll and not included when going from ship to earth
+            % coordinates for data acquired by a StreamPro or a Rio Grande
+            % ADCP with Winriver II
                     CH=cosd(obj.heading);
                     SH=sind(obj.heading);
                     P=atand(tand(0).*cosd(0));
@@ -251,7 +259,8 @@ classdef OriginData_sm
                     SP=sind(P);
                     CR=cosd(0);
                     SR=sind(0);
-                    %
+                 
+    
                     % Convert ship data to earth data
                     % -------------------------------
                     obj.btVel=nan(4,obj.numEns);
@@ -274,6 +283,7 @@ classdef OriginData_sm
                         vel_earth_temp(4,:)=vel_temp(4,:);
                         obj.wtVel(:,ii,:)=vel_earth_temp';
                     end
+
                     obj.btVel_reGGA(1,:) = -Gps.ggaVelE_mps;
                     obj.btVel_reGGA(2,:) = -Gps.ggaVelN_mps;
                     obj.btVel_reVTG(1,:) = -Gps.vtgVelE_mps;
@@ -374,8 +384,8 @@ classdef OriginData_sm
                     % --------------------------------------------------------
                     obj.idxInvalidEns=[];
                     obj.idxInvalidCells=[];
-                    for j=1:obj.numEns
-                        test=find(~isnan(obj.wVelx(:,j)), 1);
+                    for jj=1:obj.numEns
+                        test=find(~isnan(obj.wVelx(:,jj)), 1);
                         %
                         % If entire ensemble has no valid data the ensemble is
                         % marked invalid.
@@ -384,10 +394,11 @@ classdef OriginData_sm
                             %
                             % Identify invalid cells above sidelobe
                             % -------------------------------------
-                            junk=find(isnan(obj.wVelx(1:obj.numCells(j),j)))+(j-1).*obj.maxCells;
+                            junk=find(isnan(obj.wVelx(1:obj.numCells(jj),jj)))+(jj-1).*obj.maxCells;
                             obj.idxInvalidCells=[obj.idxInvalidCells; junk];
                         else
-                            obj.idxInvalidEns=[obj.idxInvalidEns; j];
+                            obj.idxInvalidEns=[obj.idxInvalidEns; jj];
+                            
                         end
                     end
                     obj.perInvalidEns=(length(obj.idxInvalidEns)./length(obj.depthEns)).*100;
