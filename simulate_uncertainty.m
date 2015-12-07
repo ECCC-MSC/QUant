@@ -6,13 +6,13 @@ set(0,'defaulttextinterpreter','tex')
 % ensure that these are the correct paths to the folders
 
 % EXAMPLE OF FOLDER PATH:
-addpath '../../general/'
+addpath 'general/'
 addpath 'tools/'
 addpath 'version_3d4/'
 
 % specify the file you want to process
 
-file = 33;
+file = 1;
 % If you don't want to process all the transects that were checked in the
 % measurement file, then alter the for loop on line 362
 
@@ -22,12 +22,12 @@ switch file
     
     case 1 % Assiniboine Stn 05MH005 date 20110517 high flow % good, done July 8 2014
         % used in EC report
-        pathname = 'G:\environment canada\data\ADCP measurements for Analysis\05MH005_20110517_aq1\';
-        filename = '05MH005_20110517.mmt';
+        pathname = 'C:\Users\lozada-tmp\Desktop\data\396-2\';
+        filename = '01192500_5122011.mmt';
     case 2 % Montelimar good, done on July 9 2014
         % used in EC report
-        pathname = 'G:\environment canada\data\ADCP measurements for Analysis\montelimar_fr\AmontUsineMO010312JL12WH2_0\';
-        filename = 'amontusinemo010312jl12wh2_0_first_4trans.mmt'; %filename = 'AmontUsineMO010312JL12WH2_0.mmt';
+        pathname = 'C:\Users\lozada-tmp\Desktop\jose data\Quant 222\frank-engel-quant-cda8332ecd93\frank-engel-quant-cda8332ecd93\QUant_FLE\data_in\05AE026_20100719_O_Connor_AQ1\';
+        filename = '05ae026_20100719.mmt'; %filename = 'AmontUsineMO010312JL12WH2_0.mmt';
     case 3 % good, done 2014-07-08, gatineau - the largest files so the slowest to run includes GPS data
         % used in EC report
         pathname = 'G:\environment canada\data\ADCP measurements for Analysis\Gatineau ADCP Data\';
@@ -388,19 +388,18 @@ end
 
 cellSize = str2double(use(3:end));
 % %%%%%%%%%%%%%%%%%%
-delete extrap_summary.mat %this deletes old summary information if it exists.
+% delete extrap_summary.mat %this deletes old summary information if it exists.
+% 
+% uiwait(msgbox('The GUI entitiled "extrap - Beta 3.4" is about to open. Click on "Open .mmt file" and select the file you are currently analyzing. Once the code has run, click on "Save Summary". Next, close the GUI so that discharge calculation can continue','Instructions','modal'));
+% 
+% handle1 = extrap3;
+% 
+% uiwait(handle1) %once the window
 
-uiwait(msgbox('The GUI entitiled "extrap - Beta 3.4" is about to open. Click on "Open .mmt file" and select the file you are currently analyzing. Once the code has run, click on "Save Summary". Next, close the GUI so that discharge calculation can continue','Instructions','modal'));
+%extrapDev = abs(str2double(QStats{2,3})) % percentage deviation from the default (Power-Power 1/6th exponent)
+extrapDev = 0.86
+%return
 
-handle1 = extrap3;
-
-uiwait(handle1) %once the window
-
-
-load extrap_summary.mat
-extrapDev = abs(str2double(QStats{2,3})) % percentage deviation from the default (Power-Power 1/6th exponent)
-
-return
 %% possibleParameters is the list of parameters that will be tested
 
 possibleParameters = {'all', 'bottom depth', 'water velocity', 'bottom velocity', ...
@@ -470,10 +469,19 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         %%
         % if you're using the output from extrap
         %%%%%%%%%%%%%%%%%%
-        top = FitStats{mm+1,2};
-        bot = FitStats{mm+1,3};
-        exponent = FitStats{mm+1,4};
-        
+%         top = FitStats{mm+1,2};
+%         bot = FitStats{mm+1,3};
+%         exponent = FitStats{mm+1,4};
+
+load('extrap_data.mat');
+top = extrap_extrapolation{mm,1};
+bot = extrap_extrapolation{mm,2};
+
+if strcmp(extrap_extrapolation{mm,2}, 'No_Slip') == 1
+    bot = 'No Slip';
+end
+
+exponent = extrap_exp(mm);     
         filename = MMT_Transects.Files{nn} % assign the transect to analyse
         transData(mm) = OriginData_sm(filename, pathname, nn, MMT, MMT_Active_Config, top, bot, exponent); % extract the data using OriginData_sm.m
         
@@ -763,9 +771,9 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         % mag dec, L dist, R dist L edge vel, R edge vel, extrap method top and bot, ...
         % left coef, right coef, missing ensembles;
         pp = 1;
-            while pp == 1
+            %while pp == 1
         
-       % while pp <= length(possibleParameters)
+        while pp <= length(possibleParameters)
             
             
             clear Qtest*
@@ -1184,23 +1192,23 @@ for nn = nStart:length(MMT_Transects.Checked) % cycle through the transects to t
         
         parameters.frac_reBot(mm,:) =  parameters.perErr_reBot(mm,2:end)./sum(parameters.perErr_reBot(mm,2:end))
         
-        figure
-        
-        hp = pie(real(parameters.frac_reBot(mm,:)));
-        [ax,leg] = legend(hp(1:2:end), parameters.name(2:end)');
-        set(ax, 'position', [0.8 0.3 .01 .01], 'units', 'normalized') % cant put it any further left
-        title(['Transect ', num2str(mm), ': \sigma_{QUant} =  ', num2str(real(parameters.perErr_reBot(mm,1)),2),'% of ', num2str(parameters.meanQ_reBot(mm),4), ' m^3/s'], 'units', 'normalized')
-        legend boxoff
-        set(gca, 'fontsize', 8.5)
-        if gpsData
-            parameters.frac_reVTG(mm,:) =  parameters.perErr_reVTG(mm,2:end)./sum(parameters.perErr_reVTG(mm,2:end))
-            parameters.frac_reGGA(mm,:) =  parameters.perErr_reGGA(mm,2:end)./sum(parameters.perErr_reGGA(mm,2:end))
-            figure
-            pie(real(parameters.perErr_reGGA(mm,2:end)), parameters.name(2:end)')
-            text(-0.05, -0.05, ['One standard deviation is ', num2str(real(parameters.perErr_reGGA(mm,1)),2),'%'], 'units', 'normalized')
-            title(['Transect ', num2str(mm)])
-            
-        end
+%         figure
+%         
+%         hp = pie(real(parameters.frac_reBot(mm,:)));
+%         [ax,leg] = legend(hp(1:2:end), parameters.name(2:end)');
+%         set(ax, 'position', [0.8 0.3 .01 .01], 'units', 'normalized') % cant put it any further left
+%         title(['Transect ', num2str(mm), ': \sigma_{QUant} =  ', num2str(real(parameters.perErr_reBot(mm,1)),2),'% of ', num2str(parameters.meanQ_reBot(mm),4), ' m^3/s'], 'units', 'normalized')
+%         legend boxoff
+%         set(gca, 'fontsize', 8.5)
+%         if gpsData
+%             parameters.frac_reVTG(mm,:) =  parameters.perErr_reVTG(mm,2:end)./sum(parameters.perErr_reVTG(mm,2:end))
+%             parameters.frac_reGGA(mm,:) =  parameters.perErr_reGGA(mm,2:end)./sum(parameters.perErr_reGGA(mm,2:end))
+%             figure
+%             pie(real(parameters.perErr_reGGA(mm,2:end)), parameters.name(2:end)')
+%             text(-0.05, -0.05, ['One standard deviation is ', num2str(real(parameters.perErr_reGGA(mm,1)),2),'%'], 'units', 'normalized')
+%             title(['Transect ', num2str(mm)])
+%             
+%         end
         
     end
     

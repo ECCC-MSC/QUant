@@ -101,8 +101,8 @@ classdef MC_Data
             obj.rightCoef = dataIn.rrightCoef.mean;
             
             obj.heading = dataIn.hheading.mean;
-            obj.pitch = dataIn.ppitch.mean;
-            obj.roll = dataIn.rroll.mean;
+            %obj.pitch = dataIn.ppitch.mean;
+            %obj.roll = dataIn.rroll.mean;
             
             
             obj.leftNumEns2Avg  = dataIn.leftNumEns2Avg;
@@ -250,6 +250,19 @@ classdef MC_Data
             
             % add uncertainty to water velocity
             
+%           vel_desv = 0.00;
+%           veloerr = dataIn.velErr.^2+vel_desv^2;
+% %           [row col] = find(veloerr == vel_desv^2);
+% %           i = 1;
+% %           
+% %           for i = 1:size(row,1)
+% %             veloerr(row(i),col(i)) = 0;
+% %           end
+% %           
+% %           load ('matriz1.mat');
+% %           veloerr = dataIn.velErr.^2+test.^2;
+%           veloerr = sqrt(veloerr);
+          
             obj.Wt.vel_mps(:, :, 1) = obj.Wt.vel_mps(:, :, 1) + varyWV*random('norm', 0, dataIn.velErr, nbins, nens) ;% last 2 numbers give the size
             obj.Wt.vel_mps(:, :, 2) = obj.Wt.vel_mps(:, :, 2) + varyWV*random('norm', 0, dataIn.velErr, nbins, nens) ;% last 2 numbers give the size
             obj.Wt.vel_mps(:, :, 3) = obj.Wt.vel_mps(:, :, 3) + varyWV*random('norm', 0, dataIn.velErr, nbins, nens) ;% last 2 numbers give the size
