@@ -55,4 +55,4 @@ That's it! Thank you for your contribution!
 
 ### Who do I talk to? ###
 
-* Frank Engel (fengel@usgs.gov) is the repo admin. Direct questions about the git workflow to him.
+* Elizabeth Jamieson (elizabeth.jamieson@canada.ca) is the repo admin. Stephanie Moore (stephanie.moore2@canada.ca) is the first author of this code.
